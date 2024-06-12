@@ -1,0 +1,87 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: felip
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: serverless-challenge
+service: funcionario-service
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: dev
+  region: us-east-1
+  environment: 
+    FUNCIONARIO_TABLE: funciona
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+        - dynamodb:UpdateItem
+      Resource: "*"
+
+functions:
+  postFuncionario:
+    handler: api/post-funcionario.submit
+    memorySize: 128
+    description: inserir um funcionario
+    events:
+      - http:
+          path: funcionarios
+          method: post
+
+  getFuncionarios:
+    handler: api/get-funcionario.list
+    memorySize: 128
+    description: listar todos os funcionarios
+    events:
+      - http:
+          path: funcionarios
+          method: get
+
+  funcionarioPorId:
+    handler: api/get-funcionario.get
+    description: listar um funcionario pelo id
+    events:
+      - http:
+          path: funcionarios/{id}
+          method: get
+
+  deleteFuncionario:
+    handler: api/delete-funcionario.delete
+    description: deletar um funcionario pelo id
+    events:
+      - http:
+          path: funcionarios/{id}
+          method: delete
+
+  updateFuncionario:
+    handler: api/update-funcionario.update
+    description: atualizar um funcionario pelo id
+    events:
+      - http:
+          path: funcionarios/{id}
+          method: put
+
+resources:
+  Resources:
+    FuncionariosDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: "id"
+            AttributeType: "S"   
+        KeySchema:
+          -
+            AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: "NEW_AND_OLD_IMAGES"
+        TableName: ${self:provider.environment.FUNCIONARIO_TABLE}

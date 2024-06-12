@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.592.0",
+    "aws-sdk": "^2.1638.0",
+    "bluebird": "^3.7.2",
+    "serverless-iam-roles-per-function": "^3.2.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "serverless-ignore": "^0.2.1"
+  }
+}
