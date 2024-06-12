@@ -1,5 +1,6 @@
-const get = require('../api/get-funcionario.js');
+import { list } from '../api/get-funcionario.js';
 
-test('testar get', () => {
-  expect(get.list()).toBe(x => x.statusCode == 200);
+test('deve retornar 200', async () => {
+  const res = await list()
+  expect(res.statusCode).toBe(200)
 })
